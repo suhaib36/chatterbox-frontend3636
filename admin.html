@@ -28,7 +28,7 @@ form.addEventListener("submit", async (e) => {
   if(!username || !password) return;
 
   try {
-    const res = await fetch("http://localhost:5000/approve-user", {
+    const res = await fetch("https://chatterbox-backend3636.onrender.com", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({username, password})
