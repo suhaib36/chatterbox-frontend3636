@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatterbox Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8">
+
+<h1 class="text-3xl font-bold mb-4">Admin Approval</h1>
+
+<form id="approveForm" class="space-y-2">
+  <input type="text" id="username" placeholder="Username" class="border p-2 rounded w-full"/>
+  <input type="text" id="password" placeholder="Password" class="border p-2 rounded w-full"/>
+  <button type="submit" class="bg-yellow-400 px-4 py-2 rounded font-bold">Approve</button>
+</form>
+
+<div id="result" class="mt-4"></div>
+
+<script>
+const form = document.getElementById("approveForm");
+const result = document.getElementById("result");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if(!username || !password) return;
+
+  try {
+    const res = await fetch("http://localhost:5000/approve-user", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    result.innerText = data.message;
+  } catch(err) {
+    result.innerText = "Error: " + err.message;
+  }
+});
+</script>
+
+</body>
+</html>

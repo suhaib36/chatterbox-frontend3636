@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatterbox – Pending Approval</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: linear-gradient(135deg, #FFF4E0, #FFD93D);
+}
+.loader {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #FFD93D;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+  margin-top: 40px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen px-4">
+
+<h1 class="text-3xl font-bold text-yellow-500 mb-4 text-center">
+  Request Pending
+</h1>
+<p class="text-gray-700 mb-6 text-center">
+  Waiting for admin approval to access Chatterbox...
+</p>
+
+<div class="loader"></div>
+
+<script>
+// Get username from localStorage
+const username = localStorage.getItem("chatterbox_user")?.trim().toLowerCase();
+
+if (!username) {
+  alert("No username found. Please login first.");
+  window.location.href = "login.html";
+}
+
+// Connect to WebSocket server
+const ws = new WebSocket("ws://localhost:5000");
+
+ws.onopen = () => {
+  console.log("Connected to backend for approval check");
+
+  // Register this pending user with backend
+  ws.send(JSON.stringify({ type: "pending-register", username }));
+};
+
+ws.onmessage = (event) => {
+  try {
+    const data = JSON.parse(event.data);
+
+    // If backend approves, redirect to chat
+    if (data.type === "approved") {
+      console.log("Approved by admin! Redirecting to chat...");
+      window.location.href = "chat.html";
+    }
+  } catch (err) {
+    console.error("Error parsing WS message:", err);
+  }
+};
+
+ws.onerror = (err) => {
+  console.error("WebSocket error:", err);
+};
+
+ws.onclose = () => {
+  console.log("WebSocket connection closed");
+};
+</script>
+
+</body>
+</html>

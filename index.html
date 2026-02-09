@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chatterbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --sunshine: #FFD93D;
+      --buttercream: #FFF8DC;
+      --honey: #F4A460;
+      --cloud: #FFFFFF;
+      --shadow: rgba(255, 217, 61, 0.3);
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #FFF4E0 0%, #FFE5B4 50%, #FFD93D 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Dreamy floating blobs */
+    @keyframes blob-float {
+      0%, 100% { 
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 0.08;
+      }
+      33% { 
+        transform: translate(30px, -30px) scale(1.1) rotate(120deg);
+        opacity: 0.12;
+      }
+      66% { 
+        transform: translate(-20px, 20px) scale(0.9) rotate(240deg);
+        opacity: 0.08;
+      }
+    }
+    
+    .blob {
+      position: absolute;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      background: radial-gradient(circle, var(--sunshine), var(--honey));
+      filter: blur(40px);
+      animation: blob-float 20s ease-in-out infinite;
+    }
+    
+    .blob-1 {
+      width: 300px;
+      height: 300px;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+    
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+    
+    .blob-3 {
+      width: 250px;
+      height: 250px;
+      top: 50%;
+      left: 50%;
+      animation-delay: 14s;
+    }
+    
+    /* Card entrance animation */
+    @keyframes card-entrance {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .card {
+      animation: card-entrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Icon bounce */
+    @keyframes icon-bounce {
+      0%, 100% { 
+        transform: translateY(0) rotate(0deg); 
+      }
+      25% { 
+        transform: translateY(-8px) rotate(-5deg); 
+      }
+      75% { 
+        transform: translateY(-4px) rotate(5deg); 
+      }
+    }
+    
+    .chat-icon {
+      animation: icon-bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(255, 217, 61, 0.4));
+    }
+    
+    /* Button magic */
+    .magic-button {
+      position: relative;
+      background: linear-gradient(135deg, #FFD93D 0%, #F4A460 100%);
+      border: none;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 
+        0 4px 15px rgba(255, 217, 61, 0.4),
+        0 8px 25px rgba(244, 164, 96, 0.2),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .magic-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .magic-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .magic-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 
+        0 6px 20px rgba(255, 217, 61, 0.5),
+        0 12px 35px rgba(244, 164, 96, 0.3),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .magic-button:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 
+        0 2px 10px rgba(255, 217, 61, 0.4),
+        0 4px 15px rgba(244, 164, 96, 0.2);
+    }
+    
+    .button-text {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    /* Arrow animation */
+    @keyframes arrow-slide {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
+    
+    .magic-button:hover .arrow {
+      animation: arrow-slide 0.6s ease-in-out infinite;
+    }
+    
+    /* Shine effect */
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transform: skewX(-25deg);
+      animation: shine 3s infinite;
+    }
+    
+    /* Decorative dots */
+    @keyframes dot-pulse {
+      0%, 100% { 
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      50% { 
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+    
+    .dot {
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+    
+    /* Location badge */
+    .location-badge {
+      background: rgba(255, 217, 61, 0.15);
+      border: 2px solid rgba(255, 217, 61, 0.3);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .location-badge:hover {
+      background: rgba(255, 217, 61, 0.25);
+      border-color: rgba(255, 217, 61, 0.5);
+      transform: scale(1.05);
+    }
+    
+    /* Title glow */
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFD93D 0%, #F4A460 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255, 217, 61, 0.3));
+    }
+    
+    /* Glass morphism card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+  
+  <!-- Animated Background Blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  
+  <!-- Main Card -->
+  <div class="card glass-card w-full max-w-md rounded-[32px] shadow-2xl p-10 text-center relative z-10">
+    
+    <!-- Chat Icon -->
+    <div class="mb-6 inline-block">
+      <div class="chat-icon text-7xl">
+        💬
+      </div>
+    </div>
+    
+    <!-- Title -->
+    <h1 class="title text-5xl mb-3 tracking-tight">
+      Chatterbox
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="text-gray-600 text-lg mb-10 font-medium leading-relaxed">
+      Your private space to connect<br/>with the people you love
+    </p>
+    
+    <!-- Get Started Button -->
+    <button id="getStartedBtn" class="magic-button w-full py-5 rounded-[20px] text-white text-xl mb-6">
+      <div class="shine"></div>
+      <span class="button-text">
+        Get Started
+        <span class="arrow">→</span>
+      </span>
+    </button>
+   
+   
+
+    <!-- Location Badge -->
+    <div class="location-badge inline-flex items-center gap-2 px-5 py-3 rounded-full">
+      <span class="text-2xl">📍</span>
+      <span class="text-sm text-gray-700 font-medium">press allow to proceed</span>
+    </div>
+    
+    <!-- Decorative Dots -->
+    <div class="mt-8 flex justify-center gap-2">
+      <div class="dot w-2.5 h-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400" style="animation-delay: 0s;"></div>
+      <div class="dot w-2.5 h-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400" style="animation-delay: 0.2s;"></div>
+      <div class="dot w-2.5 h-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400" style="animation-delay: 0.4s;"></div>
+    </div>
+  </div>
+  
+
+  <!--gtbbbbbbbbbbb-->
+
+    <div id="loginPage" class="hidden flex flex-col items-center justify-center min-h-screen px-4">
+  <h2 class="text-4xl font-bold mb-6">Login to Chatterbox</h2>
+  
+  <form id="loginForm" class="flex flex-col gap-4 w-full max-w-sm">
+    <input type="text" id="username" placeholder="Username" required
+           class="p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+    
+    <div class="relative">
+      <input type="password" id="password" placeholder="Password" required
+             class="p-3 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+      <span id="togglePassword" class="absolute right-3 top-3 cursor-pointer">👁️</span>
+    </div>
+    
+    <button type="submit" class="magic-button py-3 rounded-lg text-white font-bold">
+      Login
+    </button>
+  </form>
+</div>
+
+
+  <script>
+  const getStartedBtn = document.getElementById("getStartedBtn");
+
+  getStartedBtn.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      // If browser doesn't support GPS
+      proceedToLogin(null);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        // Store temporarily (frontend only)
+        localStorage.setItem("chatterbox_location", JSON.stringify(location));
+
+        proceedToLogin(location);
+      },
+      (error) => {
+        // Permission denied or error
+        proceedToLogin(null);
+      }
+    );
+  });
+
+  function proceedToLogin(location) {
+    // Optional: small delay for smooth UX
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 600);
+  }
+</script>
+
+<script>
+// Show/hide password feature
+const togglePassword = document.getElementById("togglePassword");
+const passwordInput = document.getElementById("password");
+
+togglePassword.addEventListener("click", () => {
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+  } else {
+    passwordInput.type = "password";
+  }
+});
+
+// Handle login form submission
+const loginForm = document.getElementById("loginForm");
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    // Send credentials to backend
+    const response = await fetch("http://localhost:5000/request-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+    console.log("Backend response:", data);
+
+    // Show request pending message
+    document.getElementById("loginPage").innerHTML = `
+      <div class="text-center mt-20">
+        <h1 class="text-3xl font-bold">Request Pending...</h1>
+        <p class="mt-4">Waiting for admin approval</p>
+      </div>
+    `;
+
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Something went wrong. Check console.");
+  }
+});
+</script>
+
+</body>
+</html>
