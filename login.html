@@ -163,7 +163,7 @@ loginForm.addEventListener("submit", async (e) => {
   };
 
   try {
-    await fetch("https://chatterbox-backend3636.onrender.com", {
+    await fetch("https://chatterbox-backend3636.onrender.com/request-access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)

@@ -47,7 +47,7 @@ if (!username) {
 }
 
 // Connect to WebSocket server
-const ws = new WebSocket("https://chatterbox-backend3636.onrender.com");
+const ws = new WebSocket("https://chatterbox-backend3636.onrender.com/check-approval?username=${username}");
 
 ws.onopen = () => {
   console.log("Connected to backend for approval check");
